@@ -1,0 +1,5 @@
+/* Active link color */
+.active {
+  color: #007bff !important;
+  font-weight: bold;
+}

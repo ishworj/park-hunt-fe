@@ -46,14 +46,14 @@ const AddSpot = () => {
   };
 
   return (
-    <Container >
+    <Container>
       <p>
         Help others find free parking by adding a spot to our database. Your
         submission will be reviewed by our team.
       </p>
       <form onSubmit={handleSubmit}>
-        <div className="m-5">
-          <label>Name of Spot:</label>
+        <div >
+          <label>Street full address:</label>
           <input
             type="text"
             name="name"

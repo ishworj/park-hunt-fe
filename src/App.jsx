@@ -5,12 +5,11 @@ import Explore from "./components/Explore.jsx";
 import AddSpot from "./components/AddSpot.jsx";
 import Favorites from "./components/Favorites.jsx";
 import Home from "./components/Home.jsx";
-
 function App() {
   return (
     <Router>
       <Header />
-      <div className="App">
+      <div className="App" >
         <Routes>
           <Route path="*" element={<Home />} />
           <Route path="/explore" element={<Explore />} />

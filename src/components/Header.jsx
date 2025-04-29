@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { FaRegUser } from "react-icons/fa";
 import { FaParking } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import LoginModal from "./modal/LoginModal";
 
 const Header = () => {
+  const [showLoginModal, setShowLoginModal]= useState(false);
+
   return (
     <Navbar
       expand="lg"
@@ -16,10 +20,14 @@ const Header = () => {
           arkHunt
         </Navbar.Brand>
         <Nav className="me-end">
-          <Nav.Link href="#profile">
+          <Nav.Link onClick={() => setShowLoginModal(true)}>
             <FaRegUser size={20} color="white" className="mb-2" />
           </Nav.Link>
         </Nav>
+        <LoginModal
+          show={showLoginModal}
+          onHide={() => setShowLoginModal(false)}
+        />
       </Container>
     </Navbar>
   );

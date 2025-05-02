@@ -6,6 +6,7 @@ import {
   useLoadScript,
 } from "@react-google-maps/api";
 import { getParkingLines } from "../features/ParkingLineAxios";
+import Search from "./Search.jsx";
 
 const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -41,7 +42,7 @@ const Explore = () => {
     // Fetch parking lines
     const fetchParkingLines = async () => {
       const lines = await getParkingLines(); // <-- actually call the function
-      setParkingCoordinates(lines); // <-- store in state
+      setParkingCoordinates(lines);
     };
 
     fetchParkingLines();
@@ -61,6 +62,8 @@ const Explore = () => {
 
   return (
     <div>
+
+      <Search />
       <div style={{ position: "relative" }}>
         <GoogleMap
           mapContainerStyle={mapContainerStyle}

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { FaRegUser } from "react-icons/fa";
 import { FaParking } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import LoginModal from "./modal/LoginModal";
 
 const Header = () => {

@@ -1,102 +1,83 @@
-import React, { useState, useEffect } from "react";
-import {
-  GoogleMap,
-  Polyline,
-  Circle,
-  useLoadScript,
-} from "@react-google-maps/api";
+import React, { useState, useEffect, useRef } from "react";
+import { useLoadScript } from "@react-google-maps/api";
 import { getParkingLines } from "../features/ParkingLineAxios";
 import Search from "./Search.jsx";
+import { FaLocationArrow } from "react-icons/fa";
+import { Button } from "react-bootstrap";
+import MapDisplay from "./MapDisplay.jsx";
 
 const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-const mapContainerStyle = {
-  width: "100%",
-  height: "85vh",
-};
-
 const Explore = () => {
-  const [center, setCenter] = useState(null);
-  const [parkingCoordinates, setParkingCoordinates] = useState([]); // <-- add state
+  const [myLocation, setMyLocation] = useState(null);
+  const [parkingCoordinates, setParkingCoordinates] = useState([]);
+  const mapRef = useRef(null);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: key,
   });
 
   useEffect(() => {
-    // Get user location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setCenter({ lat: latitude, lng: longitude });
-        },
-        () => {
-          setCenter({ lat: -33.8688, lng: 151.2093 }); // fallback
-        }
+        ({ coords }) =>
+          setMyLocation({ lat: coords.latitude, lng: coords.longitude }),
+        () => setMyLocation({ lat: -33.8688, lng: 151.2093 })
       );
     } else {
-      setCenter({ lat: -33.8688, lng: 151.2093 });
+      setMyLocation({ lat: -33.8688, lng: 151.2093 });
     }
 
-    // Fetch parking lines
     const fetchParkingLines = async () => {
-      const lines = await getParkingLines(); // <-- actually call the function
-      setParkingCoordinates(lines);
+      try {
+        const lines = await getParkingLines();
+        setParkingCoordinates(lines);
+      } catch (err) {
+        console.error("Error fetching parking lines:", err);
+      }
     };
 
     fetchParkingLines();
   }, []);
 
-  if (!center) {
-    return <div>Loading...</div>;
-  }
+  const onMapLoad = (map) => {
+    mapRef.current = map;
+  };
 
-  if (loadError) {
-    return <div>Error loading Google Maps.</div>;
-  }
+  const handleRecenter = () => {
+    if (mapRef.current && myLocation) {
+      mapRef.current.panTo(myLocation);
+    }
+  };
 
-  if (!isLoaded) {
-    return <div>Loading Google Maps...</div>;
-  }
+  if (loadError) return <div>Error loading Google Maps.</div>;
+  if (!isLoaded || !myLocation) return <div>Loading...</div>;
 
   return (
     <div>
-
       <Search />
-      <div style={{ position: "relative" }}>
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          center={center}
-          zoom={13}
-        >
-          {/* Dynamically render polyline lines */}
-          {parkingCoordinates.map((coords, index) => (
-            <Polyline
-              key={index}
-              path={coords}
-              options={{
-                strokeColor: "#00FF00",
-                strokeOpacity: 1.0,
-                strokeWeight: 5,
-              }}
-            />
-          ))}
+      <Button
+        style={{
+          position: "absolute",
+          bottom: "150px",
+          right: "10px",
+          zIndex: 9999,
+          padding: "12px",
+          border: "none",
+          borderRadius: "50%",
+          cursor: "pointer",
+        }}
+        className="d-flex justify-content-center align-items-center shadow"
+        onClick={handleRecenter}
+      >
+        <FaLocationArrow />
+      </Button>
 
-          {/* Circle Marker for Current Location */}
-          <Circle
-            center={center}
-            radius={50}
-            options={{
-              fillColor: "#FF0000",
-              fillOpacity: 0.4,
-              strokeColor: "#FF0000",
-              strokeOpacity: 1,
-              strokeWeight: 2,
-            }}
-          />
-        </GoogleMap>
-      </div>
+      <MapDisplay
+        myLocation={myLocation}
+        parkingCoordinates={parkingCoordinates}
+        onMapLoad={onMapLoad}
+      />
     </div>
   );
 };

@@ -7,55 +7,50 @@ import { Button } from "react-bootstrap";
 import MapDisplay from "./MapDisplay.jsx";
 
 const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
+const libraries = ["places"];
 const Explore = () => {
+  const [mapCenter, setMapCenter] = useState(null);
   const [myLocation, setMyLocation] = useState(null);
   const [parkingCoordinates, setParkingCoordinates] = useState([]);
   const mapRef = useRef(null);
-
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: key,
+    libraries,
   });
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        ({ coords }) =>
-          setMyLocation({ lat: coords.latitude, lng: coords.longitude }),
-        () => setMyLocation({ lat: -33.8688, lng: 151.2093 })
+        ({ coords }) => {
+          const position = { lat: coords.latitude, lng: coords.longitude };
+          setMyLocation(position);
+          setMapCenter((prev) => prev || position);
+        },
+        () => {
+          const fallback = { lat: -33.8688, lng: 151.2093 };
+          setMyLocation(fallback);
+          setMapCenter((prev) => prev || fallback);
+        }
       );
-    } else {
-      setMyLocation({ lat: -33.8688, lng: 151.2093 });
     }
-
-    const fetchParkingLines = async () => {
-      try {
-        const lines = await getParkingLines();
-        setParkingCoordinates(lines);
-      } catch (err) {
-        console.error("Error fetching parking lines:", err);
-      }
-    };
-
-    fetchParkingLines();
   }, []);
 
   const onMapLoad = (map) => {
     mapRef.current = map;
   };
 
-  const handleRecenter = () => {
-    if (mapRef.current && myLocation) {
-      mapRef.current.panTo(myLocation);
-    }
-  };
+ const handleRecenter = () => {
+   if (mapRef.current && myLocation) {
+     mapRef.current.panTo(myLocation); 
+   }
+ };
 
   if (loadError) return <div>Error loading Google Maps.</div>;
   if (!isLoaded || !myLocation) return <div>Loading...</div>;
 
   return (
     <div>
-      <Search />
+      <Search setMapCenter={setMapCenter} />
       <Button
         style={{
           position: "absolute",
@@ -75,6 +70,7 @@ const Explore = () => {
 
       <MapDisplay
         myLocation={myLocation}
+        mapCenter={mapCenter}
         parkingCoordinates={parkingCoordinates}
         onMapLoad={onMapLoad}
       />

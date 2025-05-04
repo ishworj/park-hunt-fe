@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Container, Nav } from "react-bootstrap";
 import { NavLink, useLocation } from "react-router-dom";
 import {
-  FaHome,
   FaSearchLocation,
   FaPlusCircle,
-  FaHeart,
 } from "react-icons/fa";
 
 const FooterNav = () => {
@@ -14,16 +12,10 @@ const FooterNav = () => {
 
   // Set active link based on URL
   useEffect(() => {
-    const path = location.pathname.split("/")[1];
-    if (path === "explore") {
-      setActiveLink("explore");
-    } else if (path === "addspot") {
-      setActiveLink("addspot");
-    } else if (path === "favorites") {
-      setActiveLink("favorites");
-    } else {
-      setActiveLink("home");
-    }
+    const path =
+      location.pathname === "/" ? "explore" : location.pathname.split("/")[1];
+    setActiveLink(path);
+
   }, [location]);
 
   return (
@@ -34,18 +26,6 @@ const FooterNav = () => {
             <Nav.Link
               as={NavLink}
               to="/"
-              className={`d-flex flex-column align-items-center text-dark ${
-                activeLink === "home" ? "active" : ""
-              }`}
-            >
-              <FaHome size={24} />
-              <small>home</small>
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link
-              as={NavLink}
-              to="/explore"
               className={`d-flex flex-column align-items-center text-dark ${
                 activeLink === "explore" ? "active" : ""
               }`}
@@ -64,18 +44,6 @@ const FooterNav = () => {
             >
               <FaPlusCircle size={24} />
               <small>Add Spot</small>
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link
-              as={NavLink}
-              to="/favorites"
-              className={`d-flex flex-column align-items-center text-dark ${
-                activeLink === "favorites" ? "active" : ""
-              }`}
-            >
-              <FaHeart size={24} />
-              <small>Favorites</small>
             </Nav.Link>
           </Nav.Item>
         </Nav>

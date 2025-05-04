@@ -8,28 +8,24 @@ import Header from "./components/Header.jsx";
 import FooterNav from "./components/FooterNav.jsx";
 import Explore from "./components/Explore.jsx";
 import AddSpot from "./components/AddSpot.jsx";
-import Favorites from "./components/Favorites.jsx";
-import Home from "./components/Home.jsx";
 
 function LayoutWrapper() {
   const location = useLocation();
-  const hideHeader = location.pathname === "/explore";
+  const showHeader = location.pathname === "/addspot";
 
   return (
     <>
-      {!hideHeader && <Header />}
+      {showHeader && <Header />}
 
       <div
         className="App"
         style={{
-          marginTop: hideHeader ? "0" : "67px", 
+          marginTop: showHeader ? "67px" : "0", 
         }}
       >
         <Routes>
-          <Route path="*" element={<Home />} />
-          <Route path="/explore" element={<Explore />} />
+          <Route path="*" element={<Explore />} />
           <Route path="/addspot" element={<AddSpot />} />
-          <Route path="/favorites" element={<Favorites />} />
         </Routes>
       </div>
 

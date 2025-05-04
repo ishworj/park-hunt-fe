@@ -10,14 +10,14 @@ const mapContainerStyle = {
   height: "93vh",
 };
 
-const MapDisplay = ({ myLocation, parkingCoordinates, onMapLoad }) => {
+const MapDisplay = ({ myLocation,mapCenter, parkingCoordinates, onMapLoad }) => {
   const heading = useDeviceHeading();
 
   return (
     <div style={{ position: "relative" }}>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
-        center={myLocation}
+        center={mapCenter}
         zoom={15}
         onLoad={onMapLoad}
         options={{
